@@ -63,5 +63,6 @@ vk.updates.on("message_new", async (context) => {
 vk.updates.start()
   .then(() => {
     console.log("Bot läuft");
+    console.log("DEBUG VERSION 1");
   })
   .catch(console.error);
