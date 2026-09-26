@@ -26,6 +26,12 @@ async function translate(text, target) {
 
 vk.updates.on("message_new", async (context) => {
 
+  console.log("==========");
+  console.log("Neue Nachricht");
+  console.log("Text:", context.text);
+  console.log("isChat:", context.isChat);
+  console.log("peerId:", context.peerId);
+
   if (!context.isChat) return;
 
   if (context.isOutbox) return;
