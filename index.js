@@ -7,25 +7,23 @@ const vk = new VK({
 
 async function translate(text, target) {
 
-  console.log("TRANSLATE_URL =", process.env.TRANSLATE_URL);
-
   const response = await axios.post(
-    process.env.TRANSLATE_URL,
+    "https://api-free.deepl.com/v2/translate",
     {
-      q: text,
-      source: "auto",
-      target: target,
-      format: "text"
+      text: [text],
+      target_lang: target.toUpperCase()
     },
     {
       headers: {
+        "Authorization": `DeepL-Auth-Key ${process.env.DEEPL_API_KEY}`,
         "Content-Type": "application/json"
       }
     }
   );
 
-  return response.data.translatedText;
+  return response.data.translations[0].text;
 }
+
 
 vk.updates.on("message_new", async (context) => {
 
@@ -50,10 +48,10 @@ vk.updates.on("message_new", async (context) => {
     let translated;
 
     if (isRussian) {
-      translated = await translate(text, "en");
+      translated = await translate(text, "EN");
       await context.send(`🌐 EN:\n${translated}`);
     } else {
-      translated = await translate(text, "ru");
+      translated = await translate(text, "RU");
       await context.send(`🌐 RU:\n${translated}`);
     }
 
