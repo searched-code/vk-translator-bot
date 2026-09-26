@@ -32,7 +32,7 @@ vk.updates.on("message_new", async (context) => {
   console.log("isChat:", context.isChat);
   console.log("peerId:", context.peerId);
 
-  if (!context.isChat) return;
+ // if (!context.isChat) return;
 
   if (context.isOutbox) return;
 
