@@ -6,6 +6,9 @@ const vk = new VK({
 });
 
 async function translate(text, target) {
+
+  console.log("TRANSLATE_URL =", process.env.TRANSLATE_URL);
+
   const response = await axios.post(
     process.env.TRANSLATE_URL,
     {
