@@ -6,12 +6,11 @@ const vk = new VK({
 });
 
 async function translate(text, target) {
-
   const response = await axios.post(
     "https://api-free.deepl.com/v2/translate",
     {
       text: [text],
-      target_lang: target.toUpperCase()
+      target_lang: target
     },
     {
       headers: {
@@ -24,34 +23,36 @@ async function translate(text, target) {
   return response.data.translations[0].text;
 }
 
-
 vk.updates.on("message_new", async (context) => {
 
-  console.log("==========");
-  console.log("Neue Nachricht");
-  console.log("Text:", context.text);
-  console.log("isChat:", context.isChat);
-  console.log("peerId:", context.peerId);
+  // Nur Gruppenchats
+  if (!context.isChat) return;
 
- // if (!context.isChat) return;
-
+  // Eigene Nachrichten ignorieren
   if (context.isOutbox) return;
 
   const text = context.text;
 
   if (!text || text.trim() === "") return;
 
+  // Nur Nachrichten mit !t übersetzen
+  if (!text.startsWith("!t ")) return;
+
   try {
 
-    const isRussian = /[а-яА-ЯЁё]/.test(text);
+    const originalText = text.substring(3).trim();
+
+    if (!originalText) return;
+
+    const isRussian = /[а-яА-ЯЁё]/.test(originalText);
 
     let translated;
 
     if (isRussian) {
-      translated = await translate(text, "EN");
+      translated = await translate(originalText, "EN");
       await context.send(`🌐 EN:\n${translated}`);
     } else {
-      translated = await translate(text, "RU");
+      translated = await translate(originalText, "RU");
       await context.send(`🌐 RU:\n${translated}`);
     }
 
@@ -64,6 +65,5 @@ vk.updates.on("message_new", async (context) => {
 vk.updates.start()
   .then(() => {
     console.log("Bot läuft");
-    console.log("DEBUG VERSION 1");
   })
   .catch(console.error);
